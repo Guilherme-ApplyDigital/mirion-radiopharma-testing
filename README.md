@@ -51,10 +51,9 @@ Playwright MCP is for local debugging only (not CI):
 - Dashboard architecture follows the `report-history` pattern:
   - `.github/workflows/nightly.yml` clones/pulls `report-history` into `.pages-site`.
   - `scripts/update-pages-history-site.mjs` copies the current `allure-report/` to `reports/<env>/<runStamp>/`, updates `reports/history.json`, builds `index.html`, and links the latest `reports/REGRESSION_ANALYSIS_*.md` when present.
-  - The workflow commits back to `report-history`, prepares `.pages-artifact/`, uploads it with `actions/upload-pages-artifact`, and deploys with `actions/deploy-pages`.
-- Pages URL format: `https://<owner>.github.io/<repo>/`.
-- Preferred GitHub config: **Settings -> Pages -> Build and deployment -> Source = GitHub Actions**.
-- Workflows attempt automatic enablement with `actions/configure-pages` (`enablement: true`) and keep pipeline non-blocking if Pages is temporarily unavailable.
+  - The workflow commits back to `report-history` and exposes a public static URL through jsDelivr (GitHub-backed CDN).
+- Public dashboard URL format (jsDelivr): `https://cdn.jsdelivr.net/gh/<owner>/<repo>@report-history/index.html`.
+- Branch mirror URL: `https://github.com/<owner>/<repo>/tree/report-history`.
 - Manual nightly trigger: **Actions -> Nightly E2E -> Run workflow**.
 - Retention:
   - Configurable env var `MAX_DASHBOARD_RUNS` (default `30`).

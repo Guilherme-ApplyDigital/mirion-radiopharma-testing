@@ -17,6 +17,7 @@ jobs:
   e2e-on-demand:
     runs-on: ubuntu-latest
     env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
       BASE_URL: ${{ secrets.BASE_URL }}
       APP_USERNAME: ${{ secrets.APP_USERNAME }}
       APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
@@ -41,8 +42,8 @@ jobs:
 
       - name: Run selected suite
         id: run_suite
-        continue-on-error: true
         run: |
+          set +e
           case "${{ inputs.suite }}" in
             smoke)
               npm run test:smoke -- --project=chromium --retries=0
@@ -54,6 +55,9 @@ jobs:
               npm run test:ci:chromium -- --project=chromium --retries=0
               ;;
           esac
+          suite_exit_code=$?
+          echo "exit_code=${suite_exit_code}" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Generate Allure report
         if: always()
@@ -62,8 +66,12 @@ jobs:
       - name: Analyze failures
         if: always()
         id: analyze
-        continue-on-error: true
-        run: npm run analyze
+        run: |
+          set +e
+          npm run analyze
+          analyze_exit_code=$?
+          echo "exit_code=${analyze_exit_code}" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Upload artifacts
         if: always()
@@ -80,9 +88,9 @@ jobs:
       - name: Finalize result (non-blocking)
         if: always()
         run: |
-          if [ "${{ steps.run_suite.outcome }}" != "success" ]; then
+          if [ "${{ steps.run_suite.outputs.exit_code }}" != "0" ]; then
             echo "Selected suite failed. See uploaded artifacts."
           fi
-          if [ "${{ steps.analyze.outcome }}" != "success" ]; then
+          if [ "${{ steps.analyze.outputs.exit_code }}" != "0" ]; then
             echo "Failure analyzer detected failures."
           fi
