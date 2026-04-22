@@ -1,0 +1,193 @@
+name: Nightly E2E
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      MIRION_ENV: stg
+      MIRION_BASE_URL: https://stg.radiopharma.miriontest.net/
+      BASE_URL: https://stg.radiopharma.miriontest.net/
+      APP_USERNAME: ${{ secrets.APP_USERNAME }}
+      APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+      CI_PROJECTS: chromium
+      MAX_DASHBOARD_RUNS: ${{ vars.MAX_DASHBOARD_RUNS || '30' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Restore Allure history cache
+        id: allure_cache_restore
+        uses: actions/cache/restore@v4
+        with:
+          path: .allure-history-cache
+          key: allure-history-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            allure-history-${{ github.ref_name }}-
+
+      - name: Inject previous Allure history
+        if: always() && !cancelled() && hashFiles('.allure-history-cache/history/history-trend.json') != ''
+        run: |
+          mkdir -p allure-results
+          cp -R .allure-history-cache/history allure-results/history
+
+      - name: Run tests (chromium only)
+        id: run_tests
+        continue-on-error: true
+        run: npm run test:ci:chromium -- --project=chromium
+
+      - name: Generate Allure report with history
+        if: always()
+        run: npm run allure:generate
+
+      - name: Update Allure history cache payload
+        if: always()
+        run: |
+          mkdir -p .allure-history-cache
+          if [ -d "allure-report/history" ]; then
+            rm -rf .allure-history-cache/history
+            cp -R allure-report/history .allure-history-cache/history
+          fi
+
+      - name: Save Allure history cache
+        if: always() && !cancelled() && hashFiles('.allure-history-cache/history/history-trend.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: .allure-history-cache
+          key: ${{ steps.allure_cache_restore.outputs.cache-primary-key }}
+
+      - name: Upload Playwright report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ env.MIRION_ENV }}-run-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Upload Allure results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ env.MIRION_ENV }}-run-${{ github.run_number }}
+          path: allure-results/
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Upload Allure report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-${{ env.MIRION_ENV }}-run-${{ github.run_number }}
+          path: allure-report/
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Analyze failures
+        if: always()
+        id: analyze
+        continue-on-error: true
+        run: npm run analyze
+
+      - name: Pull report-history branch
+        if: always() && !cancelled() && github.ref == 'refs/heads/main'
+        run: |
+          rm -rf .pages-site
+          if git ls-remote --exit-code --heads origin report-history >/dev/null 2>&1; then
+            git clone --branch report-history "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" .pages-site
+          else
+            mkdir -p .pages-site
+            git -C .pages-site init
+            git -C .pages-site checkout -b report-history
+          fi
+
+      - name: Update public report history site
+        if: always() && !cancelled() && github.ref == 'refs/heads/main'
+        env:
+          PAGES_SITE_DIR: .pages-site
+          SOURCE_REPORT_DIR: allure-report
+          MAX_DASHBOARD_RUNS: ${{ env.MAX_DASHBOARD_RUNS }}
+        run: npm run dashboard:update
+
+      - name: Commit and push report-history
+        if: always() && !cancelled() && github.ref == 'refs/heads/main'
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        run: |
+          if [ ! -d ".pages-site/.git" ]; then
+            echo "No git repository in .pages-site; skipping push."
+            exit 0
+          fi
+          git -C .pages-site add .
+          if git -C .pages-site diff --cached --quiet; then
+            echo "No dashboard changes to commit."
+            exit 0
+          fi
+          git -C .pages-site commit -m "Update report history for run #${{ github.run_number }}"
+          git -C .pages-site push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:report-history
+
+      - name: Prepare Pages artifact folder
+        if: always() && !cancelled() && github.ref == 'refs/heads/main'
+        run: |
+          rm -rf .pages-artifact
+          cp -R .pages-site .pages-artifact
+          rm -rf .pages-artifact/.git
+
+      - name: Upload Allure report to Pages artifact
+        if: always() && !cancelled() && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .pages-artifact/
+
+      - name: Finalize result
+        if: always()
+        run: |
+          if [ "${{ steps.run_tests.outcome }}" != "success" ]; then
+            echo "Tests failed. See artifacts and summary." >&2
+            exit 1
+          fi
+          if [ "${{ steps.analyze.outcome }}" != "success" ]; then
+            echo "Failure analyzer detected failures." >&2
+            exit 1
+          fi
+
+  deploy-report:
+    if: always() && !cancelled() && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

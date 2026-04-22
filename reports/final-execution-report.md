@@ -1,103 +1,84 @@
 # Final Execution Report
 
-## Scope Completed
+## Headline Outcome
 
-This round completed:
+- Current Chromium regression status: **41 passed / 5 failed / 8 skipped**
+- Business outcome: automation framework is stable for core navigation/content/forms coverage; remaining red items are concentrated in confirmed SEO metadata defects, not broad framework instability.
+- Allure report: `allure-report/index.html`
 
-1. Manual MCP verification across all remaining failure patterns (real browser, Chromium `1280x720`).
-2. Pattern classification into:
-   - `confirmed-app-bug`
-   - `spec-bug`
-   - `environment-flake`
-   - `known-limitation`
-3. Fixes applied **only** for `spec-bug` and `known-limitation` patterns.
-4. Fresh regression run + Allure regeneration.
+## Executive Summary
 
-## Manual Verification Summary
+We delivered a maintainable Playwright + TypeScript + Allure regression suite, executed iterative MCP-backed root-cause analysis, and hardened shared framework/spec behavior where failures were test-side. The newly surfaced 6th failure (`contact form mocked submission contract`) was investigated to closure and reclassified as a `spec-bug` caused by a timing race in the assertion logic, then fixed with a deterministic polling assertion. After rerun, that failure is resolved and the only active failures are 5 confirmed missing canonical tags that require product/SEO decisions.
 
-### Footer strict-mode ambiguity (6, historical pattern)
-- MCP result: `reproduces` as selector ambiguity when using raw `footer`, but one global contentinfo landmark is consistently present.
-- Classification: `spec-bug`
-- Action: already fixed via `getByRole('contentinfo')`.
-- Outcome: resolved in current run.
+## Findings Requiring Product Decisions
 
-### Console errors (5)
-- MCP result: focused pass (5 pages x 3 fresh loads) produced only browser-noise warnings and no first-party error signatures.
-- Classification: `spec-bug` (contract too broad for current signal quality).
-- Action: applied Phase F.1 first-party console filter + centralized noise policy + filtered-noise Allure attachment.
-- Outcome: resolved in current run (`0` console assertion failures).
+1. **Canonical metadata missing on 5 pages (still red)**
+   - Impact: SEO metadata contract fails on `home`, `about-us`, `contact-us`, `isotope-producers-radiopharmacies`, and `hospitals-clinical-sites`.
+   - Evidence: canonical value is empty in test assertions and MCP page inspection.
+   - Decision needed: add canonical tags in app templates/content pipeline and keep assertions unchanged.
+   - Reference: `reports/app-bugs-for-triage.md`
 
-### Missing canonical (5)
-- MCP result: `reproduces` on all 5 pages; `link[rel="canonical"]` absent.
-- Classification: `confirmed-app-bug`
-- Action: no test masking; documented in `reports/app-bugs-for-triage.md`.
-- Outcome: still failing (5).
+2. **Known flake tracked (currently green): `/contact-us` submenu**
+   - Impact: no current test failure, but reproducible UI nondeterminism remains.
+   - Evidence: `/solutions` submenu target appears in **11/15** direct MCP attempts and is missing in **4/15**.
+   - Decision needed: prioritize UI fix vs. framework hardening wait strategy before expanding cross-browser matrix.
+   - Reference: `reports/flake-investigation.md`
 
-### Broken images (4 pages)
-- MCP result: `does-not-reproduce` manually after scroll; flagged URLs returned `200` in direct browser fetch checks.
-- Classification: `spec-bug`
-- Action: hardened image collection logic to avoid transient lazy-load false positives.
-- Outcome: resolved in current run.
+## Closure of New 6th Failure
 
-### LinkedIn 999
-- MCP result: browser navigation lands on LinkedIn authwall (`200`), while API probe pattern remains bot-protection dependent.
-- Classification: `known-limitation`
-- Action: allow `999` for LinkedIn URL expectations.
-- Outcome: resolved in current run.
+- Failure investigated: `contact form mocked submission contract`.
+- Previous run (`36/10/8`) status check: test was green there, but historical logs show intermittent pass/fail behavior across prior runs (not a new deterministic regression from this round).
+- MCP/browser evidence:
+  - Form fill + submit repeatedly generated asynchronous POST telemetry events.
+  - The spec asserted synchronously right after click, creating a race where matching requests arrived after assertion in failing runs.
+  - reCAPTCHA scripts are present in page assets; no deterministic new endpoint contract change was observed in this pass.
+- Root cause classification: `spec-bug` (assertion timing race with asynchronous request emission).
+- Fix applied: changed immediate length assertion to `expect.poll(...)` with timeout in `tests/regression/forms/contact-form.spec.ts`.
+- Validation:
+  - Isolated repeat: **5/5 pass** (`--repeat-each=5`).
+  - Full Chromium rerun: contact form suite fully green.
 
-### `/contact-us` submenu behavior
-- MCP result: `flaky` (combined direct MCP attempts => `/solutions` exposed `11/15`, missing `4/15`).
-- Classification: `environment-flake` with framework-race recommendation.
-- Action: no masking fix applied; recommended explicit open-state wait sequence documented in `reports/flake-investigation.md`.
-- Outcome: not failing in the final rerun, but still classified as flaky risk.
+## Recommended Next Steps
 
-## Previous vs Current Results
+1. Open product tickets for missing canonical tags (5 affected routes) and treat them as audit deliverables, not framework debt.
+2. Decide whether to implement submenu flake fix in app or adopt framework wait strategy before Firefox/mobile expansion.
+3. Re-enable Firefox and mobile projects after canonical fixes are merged, to validate cross-engine behavior.
+4. Start authenticated-flow expansion in `tests/regression/authenticated/` once credentials and target journeys are approved.
+5. Add nightly notifications (e.g., Slack) from CI artifacts to shorten triage latency for future regressions.
 
-- Previous run before this round: **36 passed / 10 failed / 8 skipped**
-- Current run after this round: **40 passed / 6 failed / 8 skipped**
-- Net delta: **+4 passed / -4 failed / 0 skipped**
+## Compact Evidence Trail
 
-Historical reference from early stabilization stage:
+- Timeout clustering and fix strategy: `reports/timeout-investigation-2026-04-22-1545.md`
+- Remaining-failure taxonomy: `reports/remaining-failures-breakdown.md`
+- Console classification and Path A rationale: `reports/console-errors-classified.md`
+- Canonical bug ledger: `reports/app-bugs-for-triage.md`
+- Flake evidence (`/contact-us` submenu): `reports/flake-investigation.md`
+- SEO title discrepancy holdbacks: `reports/seo-title-discrepancies.md`
+
+## Appendix A: Technical Run History
+
 - Earlier Chromium baseline: **7 passed / 43 failed / 4 skipped**
+- Pre-final hardening run: **36 passed / 10 failed / 8 skipped**
+- Pre-6th-failure closure run: **40 passed / 6 failed / 8 skipped**
+- Current run (after contact-form spec fix): **41 passed / 5 failed / 8 skipped**
 
-## Per-Pattern Outcome Table
+## Appendix B: Technical Classification Snapshot
 
-| Pattern | Classification | Action taken | Result |
+| Pattern | Classification | Action | Current state |
 |---|---|---|---|
-| Footer strict-mode ambiguity | `spec-bug` | Asserted landmark instead of broad footer selector | Resolved |
-| Console error contract | `spec-bug` | Filtered to first-party errors only; attached filtered noise for audit | Resolved |
-| Canonical missing | `confirmed-app-bug` | No masking; documented for product triage | Still red (5) |
-| Broken image integrity | `spec-bug` | Stabilized image-load validation logic | Resolved |
-| LinkedIn 999 | `known-limitation` | Allowed anti-bot `999` statuses for LinkedIn checks | Resolved |
-| `/contact-us` submenu | `environment-flake` | No masking; evidence report with 15-attempt flake capture and wait-strategy recommendation | Non-deterministic risk (green in final run) |
+| Footer selector ambiguity | `spec-bug` | Landmark-scoped footer (`contentinfo`) | Resolved |
+| Console contract ambiguity | `spec-bug` | First-party filtering + known noise policy | Resolved |
+| Image integrity false negatives | `spec-bug` | Stabilized lazy-load collection strategy | Resolved |
+| LinkedIn anti-bot status `999` | `known-limitation` | Allowed status policy update | Resolved |
+| Contact mocked submission race | `spec-bug` | Poll-based assertion after submit click | Resolved |
+| Missing canonical metadata | `confirmed-app-bug` | No masking; documented for triage | Failing (5) |
+| `/contact-us` submenu nondeterminism | `environment-flake` | Evidence-only tracking + wait strategy recommendation | Green but risky |
 
-## Commits Made This Round
+## Appendix C: Commit Trace (Technical)
 
 - `5dea6de` — Stabilize image integrity checks around lazy loading.
 - `45a0950` — Allow LinkedIn anti-bot status in external link checks.
 - `8f48c7f` — Document manual MCP verification findings and classifications.
 - `b4d4797` — Prevent image integrity checks from timing out test budget.
-- `974428d` — Phase F.1: enforce first-party console error contract.
-- `3e9caa1` — Update console and flake disclosures for final handoff.
-
-## Allure Report
-
-- Path: `allure-report/index.html`
-
-## What's Still Red and Why
-
-1. **5 failures: canonical metadata assertions**
-   - Why red: canonical tags are genuinely absent on core pages in manual MCP checks.
-   - Classification: `confirmed-app-bug`
-   - Next decision needed: product/SEO implementation fix in app, then keep assertions as-is.
-
-2. **1 failure: contact form mocked submission contract**
-   - Why red: mocked submission test did not observe expected POST during run.
-   - Classification: pending triage (`other`)
-   - Next decision needed: verify current form submission endpoint pattern and route interception coverage.
-
-3. **Known flake (not currently red, tracked): `/contact-us` submenu**
-   - Why tracked: direct MCP interaction remains non-deterministic even when latest run is green.
-   - Reproduction rate: **11/15** success, **4/15** failure to expose `/solutions` after click.
-   - Classification: `environment-flake` (framework-race recommendation documented)
-   - Reference: `reports/flake-investigation.md`
+- `974428d` — Enforce first-party console error contract.
+- `3e9caa1` — Update console and flake disclosures for handoff.

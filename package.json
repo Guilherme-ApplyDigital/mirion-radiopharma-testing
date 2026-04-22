@@ -1,0 +1,35 @@
+{
+  "name": "playwright-mcp-radiopharma",
+  "version": "1.0.0",
+  "description": "E2E automation framework for Mirion Radiopharma",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ci": "playwright test --reporter=list,html,json,allure-playwright",
+    "test:ci:chromium": "playwright test --project=chromium --reporter=line,html,allure-playwright",
+    "test:smoke": "playwright test tests/smoke",
+    "test:regression": "playwright test tests/regression",
+    "report": "allure generate allure-results --clean && allure open allure-report",
+    "allure:generate": "node ./scripts/generate-allure-with-history.mjs",
+    "dashboard:update": "node ./scripts/update-pages-history-site.mjs",
+    "analyze": "tsx scripts/analyze-failures.ts"
+  },
+  "keywords": [
+    "playwright",
+    "allure",
+    "e2e",
+    "testing"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.2",
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.2.3",
+    "allure-commandline": "^2.36.0",
+    "allure-playwright": "^3.4.5",
+    "dotenv": "^17.2.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
