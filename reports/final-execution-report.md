@@ -22,10 +22,10 @@ This round completed:
 - Outcome: resolved in current run.
 
 ### Console errors (5)
-- MCP result: `does-not-reproduce` deterministically in fresh contexts; observed warnings vary by run.
-- Classification: `environment-flake` (inconclusive deterministic repro).
-- Action: no masking changes applied.
-- Outcome: still failing (5).
+- MCP result: focused pass (5 pages x 3 fresh loads) produced only browser-noise warnings and no first-party error signatures.
+- Classification: `spec-bug` (contract too broad for current signal quality).
+- Action: applied Phase F.1 first-party console filter + centralized noise policy + filtered-noise Allure attachment.
+- Outcome: resolved in current run (`0` console assertion failures).
 
 ### Missing canonical (5)
 - MCP result: `reproduces` on all 5 pages; `link[rel="canonical"]` absent.
@@ -46,16 +46,16 @@ This round completed:
 - Outcome: resolved in current run.
 
 ### `/contact-us` submenu behavior
-- MCP result: `flaky` (5 attempts => `/solutions` exposed `3/5`, missing `2/5`).
-- Classification: `environment-flake`
-- Action: no masking fix; documented in `reports/flake-investigation.md` and `reports/header-submenu-contact-us-investigation.md`.
+- MCP result: `flaky` (combined direct MCP attempts => `/solutions` exposed `11/15`, missing `4/15`).
+- Classification: `environment-flake` with framework-race recommendation.
+- Action: no masking fix applied; recommended explicit open-state wait sequence documented in `reports/flake-investigation.md`.
 - Outcome: not failing in the final rerun, but still classified as flaky risk.
 
 ## Previous vs Current Results
 
-- Previous run before this round: **31 passed / 15 failed / 8 skipped**
-- Current run after this round: **36 passed / 10 failed / 8 skipped**
-- Net delta: **+5 passed / -5 failed / 0 skipped**
+- Previous run before this round: **36 passed / 10 failed / 8 skipped**
+- Current run after this round: **40 passed / 6 failed / 8 skipped**
+- Net delta: **+4 passed / -4 failed / 0 skipped**
 
 Historical reference from early stabilization stage:
 - Earlier Chromium baseline: **7 passed / 43 failed / 4 skipped**
@@ -65,11 +65,11 @@ Historical reference from early stabilization stage:
 | Pattern | Classification | Action taken | Result |
 |---|---|---|---|
 | Footer strict-mode ambiguity | `spec-bug` | Asserted landmark instead of broad footer selector | Resolved |
-| Console error contract | `environment-flake` | No masking; documented for investigation | Still red (5) |
+| Console error contract | `spec-bug` | Filtered to first-party errors only; attached filtered noise for audit | Resolved |
 | Canonical missing | `confirmed-app-bug` | No masking; documented for product triage | Still red (5) |
 | Broken image integrity | `spec-bug` | Stabilized image-load validation logic | Resolved |
 | LinkedIn 999 | `known-limitation` | Allowed anti-bot `999` statuses for LinkedIn checks | Resolved |
-| `/contact-us` submenu | `environment-flake` | No masking; evidence report with 5-attempt flake capture | Non-deterministic risk (green in final run) |
+| `/contact-us` submenu | `environment-flake` | No masking; evidence report with 15-attempt flake capture and wait-strategy recommendation | Non-deterministic risk (green in final run) |
 
 ## Commits Made This Round
 
@@ -77,6 +77,7 @@ Historical reference from early stabilization stage:
 - `45a0950` — Allow LinkedIn anti-bot status in external link checks.
 - `8f48c7f` — Document manual MCP verification findings and classifications.
 - `b4d4797` — Prevent image integrity checks from timing out test budget.
+- `974428d` — Phase F.1: enforce first-party console error contract.
 
 ## Allure Report
 
@@ -84,12 +85,18 @@ Historical reference from early stabilization stage:
 
 ## What's Still Red and Why
 
-1. **5 failures: page-contract console error assertions**
-   - Why red: intermittent/non-deterministic console noise pattern; not safely classifiable as deterministic app defect from this pass.
-   - Classification: `environment-flake`
-   - Next decision needed: whether to narrow console contract scope (first-party only) or keep strict and investigate external script noise.
-
-2. **5 failures: canonical metadata assertions**
+1. **5 failures: canonical metadata assertions**
    - Why red: canonical tags are genuinely absent on core pages in manual MCP checks.
    - Classification: `confirmed-app-bug`
    - Next decision needed: product/SEO implementation fix in app, then keep assertions as-is.
+
+2. **1 failure: contact form mocked submission contract**
+   - Why red: mocked submission test did not observe expected POST during run.
+   - Classification: pending triage (`other`)
+   - Next decision needed: verify current form submission endpoint pattern and route interception coverage.
+
+3. **Known flake (not currently red, tracked): `/contact-us` submenu**
+   - Why tracked: direct MCP interaction remains non-deterministic even when latest run is green.
+   - Reproduction rate: **11/15** success, **4/15** failure to expose `/solutions` after click.
+   - Classification: `environment-flake` (framework-race recommendation documented)
+   - Reference: `reports/flake-investigation.md`

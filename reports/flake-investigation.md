@@ -4,7 +4,7 @@ This document captures patterns manually verified as `environment-flake` (interm
 
 ## 1) `/contact-us` header submenu intermittently collapses
 
-- Classification: `environment-flake`
+- Classification: `environment-flake` with **framework-fix recommendation**
 - Pattern: `Header button "Solutions" opened, but no submenu target matched route "/solutions".`
 - Affected spec: `tests/regression/navigation/header-navigation.spec.ts`
 - Severity suggestion: **Medium** (intermittent navigation test instability)
@@ -32,9 +32,48 @@ This document captures patterns manually verified as `environment-flake` (interm
   - `reports/screenshots/header-submenu-contact-us-attempt-4-2026-04-22T16-31-49-970Z.png`
   - `reports/screenshots/header-submenu-contact-us-attempt-5-2026-04-22T16-32-04-894Z.png`
 
-### Hypothesis
+### Position
 
-- Menu state is timing-sensitive under automation; target lookup can run during a collapsed state.
+- Based on the repeated MCP evidence, this is most consistent with a **framework interaction race**, not a deterministic app content bug.
+- Reason: the same menu reliably contains `/solutions` when open, but visibility flips between collapsed and expanded immediately after click during automation probing.
+
+### Additional focused rerun (10 more direct MCP attempts)
+
+- Performed 10 additional direct interaction attempts (`/contact-us` -> click `Solutions` -> probe for visible `/solutions` link within 1s).
+- Results:
+  - submenu exposed `/solutions`: **8/10**
+  - submenu did not expose `/solutions`: **2/10**
+- Additional screenshots:
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-1-2026-04-22T17-38-42-074Z.png`
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-2-2026-04-22T17-38-57-056Z.png`
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-3-2026-04-22T17-39-16-016Z.png`
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-4-2026-04-22T17-39-33-530Z.png`
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-5-2026-04-22T17-39-52-719Z.png`
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-6-2026-04-22T17-40-12-857Z.png`
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-7-2026-04-22T17-40-34-598Z.png`
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-8-2026-04-22T17-40-50-510Z.png`
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-9-2026-04-22T17-41-09-000Z.png`
+  - `reports/screenshots/header-submenu-contact-us-extra-attempt-10-2026-04-22T17-41-28-242Z.png`
+
+### Combined flake rate (all direct MCP attempts so far)
+
+- Previous run: **3/5**
+- Additional run: **8/10**
+- Combined: **11/15** exposed `/solutions` (success), **4/15** failed to expose
+
+This confirms a persistent non-deterministic flake rather than a fully resolved behavior.
+
+### Recommended framework fix (do not apply yet)
+
+After clicking the `Solutions` trigger, wait for an explicit open-state DOM condition before querying submenu links:
+
+1. Trigger click: `header button[name*="Solutions"]`
+2. Wait for button state: `aria-expanded="true"`
+3. Wait for submenu container visibility: `ol#mainMenu` (or equivalent nav list) to be visible
+4. Wait for target anchor visibility: `a[href="/solutions"]` visible inside the opened menu
+5. Then click/query route assertion
+
+This strategy targets state-based readiness (expanded + visible menu + visible target) instead of immediate post-click lookup.
 
 ---
 
