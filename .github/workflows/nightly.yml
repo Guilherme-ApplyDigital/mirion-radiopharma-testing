@@ -8,6 +8,8 @@ on:
 permissions:
   contents: write
   actions: read
+  pages: write
+  id-token: write
 
 jobs:
   test:
@@ -160,11 +162,18 @@ jobs:
           git -C .pages-site commit -m "Update report history for run #${{ github.run_number }}"
           git -C .pages-site push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:report-history
 
-      - name: Public storage links
+      - name: Prepare Pages artifact folder
         if: always() && !cancelled() && github.ref == 'refs/heads/main'
         run: |
-          echo "Public dashboard (jsDelivr): https://cdn.jsdelivr.net/gh/${{ github.repository }}@report-history/index.html"
-          echo "Branch mirror (GitHub): https://github.com/${{ github.repository }}/tree/report-history"
+          rm -rf .pages-artifact
+          cp -R .pages-site .pages-artifact
+          rm -rf .pages-artifact/.git
+
+      - name: Upload Allure report to Pages artifact
+        if: always() && !cancelled() && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .pages-artifact/
 
       - name: Finalize result (non-blocking)
         if: always()
@@ -175,3 +184,26 @@ jobs:
           if [ "${{ steps.analyze.outputs.exit_code }}" != "0" ]; then
             echo "Failure analyzer detected failures."
           fi
+
+  deploy-report:
+    if: always() && !cancelled() && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Configure GitHub Pages
+        id: configure_pages
+        continue-on-error: true
+        uses: actions/configure-pages@v5
+
+      - name: Deploy to GitHub Pages
+        if: steps.configure_pages.outcome == 'success'
+        id: deploy
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Pages fallback note
+        if: steps.configure_pages.outcome != 'success'
+        run: echo "Pages configure failed. Ensure repository Pages Source is set to GitHub Actions."
