@@ -22,6 +22,14 @@ const sha = (process.env.GITHUB_SHA || 'local').slice(0, 7);
 const repository = process.env.GITHUB_REPOSITORY || 'local/repository';
 const serverUrl = process.env.GITHUB_SERVER_URL || 'https://github.com';
 const runUrl = `${serverUrl}/${repository}/actions/runs/${runId}`;
+const dashboardBaseUrl = String(process.env.DASHBOARD_BASE_URL || '').trim().replace(/\/+$/, '');
+
+function buildPublicUrl(relativePath) {
+  if (!dashboardBaseUrl) {
+    return relativePath;
+  }
+  return `${dashboardBaseUrl}/${String(relativePath).replace(/^\/+/, '')}`;
+}
 
 function escapeHtml(value) {
   return String(value)
@@ -166,12 +174,17 @@ function buildDashboardHtml(historyEntries) {
 
   const rowsHtml =
     historyEntries.length === 0
-      ? '<tr><td colspan="7">No runs yet.</td></tr>'
+      ? '<tr><td colspan="8">No runs yet.</td></tr>'
       : historyEntries
           .map((entry) => {
-            const reportLink = `<a href="${entry.reportPath}">Open report</a>`;
-            const analysisLink = entry.analysisPath ? `<a href="${entry.analysisPath}">Open analysis</a>` : '-';
-            const runLink = `<a href="${entry.runUrl}" target="_blank" rel="noopener noreferrer">#${entry.runNumber}</a>`;
+            const publicReportUrl = buildPublicUrl(entry.reportPath);
+            const reportLink = `<a href="${publicReportUrl}" target="_blank" rel="noopener noreferrer">Open report</a>`;
+            const analysisUrl = entry.analysisPath ? buildPublicUrl(entry.analysisPath) : '';
+            const analysisLink = analysisUrl
+              ? `<a href="${analysisUrl}" target="_blank" rel="noopener noreferrer">Open analysis</a>`
+              : '-';
+            const runLink = `<a href="${publicReportUrl}" target="_blank" rel="noopener noreferrer">#${entry.runNumber}</a>`;
+            const actionsRunLink = `<a href="${entry.runUrl}" target="_blank" rel="noopener noreferrer">Open run</a>`;
             return `<tr>
   <td>${escapeHtml(entry.date)}</td>
   <td>${escapeHtml(entry.env)}</td>
@@ -179,6 +192,7 @@ function buildDashboardHtml(historyEntries) {
   <td><code>${escapeHtml(entry.sha)}</code></td>
   <td>${reportLink}</td>
   <td>${analysisLink}</td>
+  <td>${actionsRunLink}</td>
   <td><code>${escapeHtml(entry.id)}</code></td>
 </tr>`;
           })
@@ -227,6 +241,7 @@ function buildDashboardHtml(historyEntries) {
             <th>Commit</th>
             <th>Allure report</th>
             <th>Analysis</th>
+            <th>Actions run</th>
             <th>ID</th>
           </tr>
         </thead>

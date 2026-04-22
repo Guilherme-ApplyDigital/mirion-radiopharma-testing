@@ -3,8 +3,6 @@ name: Playwright Tests
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
 
 permissions:
   contents: write
@@ -19,6 +17,7 @@ jobs:
       MIRION_ENV: stg
       MIRION_BASE_URL: https://stg.radiopharma.miriontest.net/
       BASE_URL: https://stg.radiopharma.miriontest.net/
+      DASHBOARD_BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
       CI_PROJECTS: chromium
       CI_RETRIES: '0'
       MAX_DASHBOARD_RUNS: ${{ vars.MAX_DASHBOARD_RUNS || '30' }}
