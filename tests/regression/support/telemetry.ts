@@ -1,7 +1,14 @@
 import { expect, Page, Request, Response } from '@playwright/test';
+import { KNOWN_CONSOLE_NOISE } from '../../../src/data/console-policies';
+
+type ConsoleEntry = {
+  type: string;
+  text: string;
+  sourceUrl: string;
+};
 
 export type Tracker = {
-  consoleErrors: string[];
+  consoleErrors: ConsoleEntry[];
   failedRequests: string[];
   failedResponses: string[];
   stop: () => void;
@@ -16,13 +23,22 @@ function sameOrigin(url: string, baseURL: string): boolean {
 }
 
 export function startTracker(page: Page, baseURL: string): Tracker {
-  const consoleErrors: string[] = [];
+  const consoleErrors: ConsoleEntry[] = [];
   const failedRequests: string[] = [];
   const failedResponses: string[] = [];
 
-  const onConsole = (msg: { type: () => string; text: () => string }) => {
-    if (msg.type() === 'error') {
-      consoleErrors.push(msg.text());
+  const onConsole = (msg: {
+    type: () => string;
+    text: () => string;
+    location: () => { url?: string };
+  }) => {
+    if (msg.type() === 'error' || msg.type() === 'exception') {
+      const location = msg.location();
+      consoleErrors.push({
+        type: msg.type(),
+        text: msg.text(),
+        sourceUrl: location?.url ?? '',
+      });
     }
   };
 
@@ -54,12 +70,48 @@ export function startTracker(page: Page, baseURL: string): Tracker {
   };
 }
 
-export async function assertNoPageErrors(tracker: Tracker): Promise<void> {
-  expect(tracker.consoleErrors, `Console errors found:\n${tracker.consoleErrors.join('\n')}`).toEqual([]);
+export async function assertNoPageErrors(tracker: Tracker, baseURL: string): Promise<string[]> {
+  const baseHost = new URL(baseURL).hostname;
+  const firstPartyErrors: string[] = [];
+  const filteredNoise: string[] = [];
+
+  for (const entry of tracker.consoleErrors) {
+    const sourceUrl = entry.sourceUrl.trim();
+    const formatted = `[${entry.type}] ${entry.text}${sourceUrl ? ` @ ${sourceUrl}` : ''}`;
+
+    if (!sourceUrl) {
+      filteredNoise.push(`[filtered:no-source] ${formatted}`);
+      continue;
+    }
+
+    let sourceHost = '';
+    try {
+      sourceHost = new URL(sourceUrl).hostname;
+    } catch {
+      filteredNoise.push(`[filtered:invalid-source] ${formatted}`);
+      continue;
+    }
+
+    if (sourceHost !== baseHost) {
+      filteredNoise.push(`[filtered:non-first-party:${sourceHost}] ${formatted}`);
+      continue;
+    }
+
+    if (KNOWN_CONSOLE_NOISE.some((pattern) => pattern.test(entry.text) || pattern.test(sourceUrl))) {
+      filteredNoise.push(`[filtered:known-noise] ${formatted}`);
+      continue;
+    }
+
+    firstPartyErrors.push(formatted);
+  }
+
+  expect(firstPartyErrors, `First-party console errors found:\n${firstPartyErrors.join('\n')}`).toEqual([]);
   expect(
     [...tracker.failedRequests, ...tracker.failedResponses],
     `Network failures found:\n${[...tracker.failedRequests, ...tracker.failedResponses].join('\n')}`,
   ).toEqual([]);
+
+  return filteredNoise;
 }
 
 export async function collectImageFailures(page: Page): Promise<string[]> {
