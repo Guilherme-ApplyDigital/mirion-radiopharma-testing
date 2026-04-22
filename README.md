@@ -53,7 +53,8 @@ Playwright MCP is for local debugging only (not CI):
   - `scripts/update-pages-history-site.mjs` copies the current `allure-report/` to `reports/<env>/<runStamp>/`, updates `reports/history.json`, builds `index.html`, and links the latest `reports/REGRESSION_ANALYSIS_*.md` when present.
   - The workflow commits back to `report-history`, prepares `.pages-artifact/`, uploads it with `actions/upload-pages-artifact`, and deploys with `actions/deploy-pages`.
 - Pages URL format: `https://<owner>.github.io/<repo>/`.
-- One-time GitHub config: **Settings -> Pages -> Build and deployment -> Source = GitHub Actions**.
+- Preferred GitHub config: **Settings -> Pages -> Build and deployment -> Source = GitHub Actions**.
+- Workflows attempt automatic enablement with `actions/configure-pages` (`enablement: true`) and keep pipeline non-blocking if Pages is temporarily unavailable.
 - Manual nightly trigger: **Actions -> Nightly E2E -> Run workflow**.
 - Retention:
   - Configurable env var `MAX_DASHBOARD_RUNS` (default `30`).

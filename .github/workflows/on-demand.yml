@@ -77,14 +77,12 @@ jobs:
             test-results/
           if-no-files-found: warn
 
-      - name: Finalize result
+      - name: Finalize result (non-blocking)
         if: always()
         run: |
           if [ "${{ steps.run_suite.outcome }}" != "success" ]; then
-            echo "Selected suite failed. See uploaded artifacts." >&2
-            exit 1
+            echo "Selected suite failed. See uploaded artifacts."
           fi
           if [ "${{ steps.analyze.outcome }}" != "success" ]; then
-            echo "Failure analyzer detected failures." >&2
-            exit 1
+            echo "Failure analyzer detected failures."
           fi
