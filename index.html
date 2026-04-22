@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mirion Radiopharma - Playwright Dashboard</title>
+    <style>
+      body { margin: 0; font-family: Arial, sans-serif; background: #f8fafc; color: #0f172a; }
+      .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+      .cards { display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: 12px; margin: 20px 0; }
+      .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; }
+      .card .label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+      .card .value { margin-top: 6px; font-size: 20px; font-weight: 700; }
+      table { width: 100%; border-collapse: collapse; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+      thead th { background: #0f172a; color: #f8fafc; text-align: left; font-size: 13px; padding: 10px; }
+      tbody td { border-top: 1px solid #e2e8f0; padding: 10px; font-size: 14px; vertical-align: top; }
+      code { background: #eef2ff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+      a { color: #2563eb; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      @media (max-width: 900px) { .cards { grid-template-columns: repeat(2, minmax(140px, 1fr)); } }
+      @media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Mirion Radiopharma - Playwright Dashboard</h1>
+      <p>Nightly run history with links to Allure reports and optional regression analysis.</p>
+      <div class="cards">
+        <div class="card"><div class="label">Total runs</div><div class="value">1</div></div>
+<div class="card"><div class="label">Latest env</div><div class="value">stg</div></div>
+<div class="card"><div class="label">Latest run number</div><div class="value">3</div></div>
+<div class="card"><div class="label">Latest SHA</div><div class="value">fa2eff5</div></div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Date (UTC)</th>
+            <th>Environment</th>
+            <th>Run</th>
+            <th>Commit</th>
+            <th>Allure report</th>
+            <th>Analysis</th>
+            <th>ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+  <td>2026-04-22T19:44:54.821Z</td>
+  <td>stg</td>
+  <td><a href="https://github.com/Guilherme-ApplyDigital/mirion-radiopharma-testing/actions/runs/24798759692" target="_blank" rel="noopener noreferrer">#3</a></td>
+  <td><code>fa2eff5</code></td>
+  <td><a href="reports/stg/2026-04-22T19-44-54-801Z-run-3/index.html">Open report</a></td>
+  <td>-</td>
+  <td><code>24798759692-stg</code></td>
+</tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
