@@ -21,6 +21,7 @@ jobs:
       APP_USERNAME: ${{ secrets.APP_USERNAME }}
       APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
       CI_PROJECTS: chromium
+      CI_RETRIES: '0'
       MAX_DASHBOARD_RUNS: ${{ vars.MAX_DASHBOARD_RUNS || '30' }}
 
     steps:

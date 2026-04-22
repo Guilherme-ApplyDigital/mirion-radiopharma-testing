@@ -20,6 +20,8 @@ jobs:
       BASE_URL: ${{ secrets.BASE_URL }}
       APP_USERNAME: ${{ secrets.APP_USERNAME }}
       APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+      CI_PROJECTS: chromium
+      CI_RETRIES: '0'
 
     steps:
       - name: Checkout
@@ -43,13 +45,13 @@ jobs:
         run: |
           case "${{ inputs.suite }}" in
             smoke)
-              npm run test:smoke
+              npm run test:smoke -- --project=chromium --retries=0
               ;;
             regression)
-              npm run test:regression
+              npm run test:regression -- --project=chromium --retries=0
               ;;
             *)
-              npm run test:ci
+              npm run test:ci:chromium -- --project=chromium --retries=0
               ;;
           esac
 
