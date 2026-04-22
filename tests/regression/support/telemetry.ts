@@ -69,27 +69,29 @@ export async function collectImageFailures(page: Page): Promise<string[]> {
 
     for (const image of images) {
       image.scrollIntoView({ block: 'center', inline: 'center' });
+    }
 
+    const pending = images.filter((image) => !image.complete);
+    if (pending.length) {
+      await Promise.race([
+        Promise.all(
+          pending.map(
+            (image) =>
+              new Promise<void>((resolve) => {
+                image.addEventListener('load', () => resolve(), { once: true });
+                image.addEventListener('error', () => resolve(), { once: true });
+              }),
+          ),
+        ),
+        new Promise<void>((resolve) => {
+          setTimeout(() => resolve(), 4000);
+        }),
+      ]);
+    }
+
+    for (const image of images) {
       if (!image.complete) {
-        await Promise.race([
-          new Promise<void>((resolve) => {
-            image.addEventListener('load', () => resolve(), { once: true });
-            image.addEventListener('error', () => resolve(), { once: true });
-          }),
-          new Promise<void>((resolve) => {
-            setTimeout(() => resolve(), 3000);
-          }),
-        ]);
-      }
-
-      if (image.complete && image.naturalWidth > 0) {
         continue;
-      }
-
-      try {
-        await image.decode();
-      } catch {
-        // decode can reject for broken images and cross-origin images, keep validating via naturalWidth.
       }
 
       if (image.naturalWidth <= 0) {
