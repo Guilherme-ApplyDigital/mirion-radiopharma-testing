@@ -78,6 +78,7 @@ Historical reference from early stabilization stage:
 - `8f48c7f` — Document manual MCP verification findings and classifications.
 - `b4d4797` — Prevent image integrity checks from timing out test budget.
 - `974428d` — Phase F.1: enforce first-party console error contract.
+- `3e9caa1` — Update console and flake disclosures for final handoff.
 
 ## Allure Report
 
