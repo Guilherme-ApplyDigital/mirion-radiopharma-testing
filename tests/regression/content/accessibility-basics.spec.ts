@@ -19,7 +19,7 @@ test.describe('Accessibility basics', () => {
           await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
           await expect(page.getByRole('banner')).toBeVisible();
           await expect(page.locator('main')).toBeVisible();
-          await expect(page.locator('footer')).toBeVisible();
+          await expect(page.getByRole('contentinfo')).toBeVisible();
           await expect(page.locator('nav').first()).toBeVisible();
 
           const missingImageAltCount = await page.locator('img:not([alt])').count();
