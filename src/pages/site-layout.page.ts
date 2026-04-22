@@ -9,12 +9,13 @@ export class SiteLayoutPage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.header = page.getByRole('banner');
-    this.footer = page.locator('footer').first();
+    this.footer = page.getByRole('contentinfo');
     this.logoLink = page.locator('a[href="/"]').first();
   }
 
   async expectLayoutVisible(): Promise<void> {
     await expect(this.header).toBeVisible();
+    await expect(this.footer, 'Expected exactly one global contentinfo landmark.').toHaveCount(1);
     await expect(this.footer).toBeVisible();
   }
 
@@ -49,6 +50,7 @@ export class SiteLayoutPage extends BasePage {
   }
 
   async clickFooterLink(label: string): Promise<void> {
+    await expect(this.footer, 'Expected exactly one global contentinfo landmark.').toHaveCount(1);
     await this.footer.getByRole('link', { name: label, exact: false }).first().click();
   }
 
