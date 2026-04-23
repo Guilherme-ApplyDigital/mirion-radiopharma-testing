@@ -16,9 +16,6 @@ test(
     + '@allure.label.severity:critical '
     + '@smoke @regression @critical',
   async ({ page, baseURL }, testInfo) => {
-    // Pending product/marketing confirmation — see reports/seo-title-discrepancies.md
-    test.fixme(true, 'Pending product/marketing confirmation — see reports/seo-title-discrepancies.md');
-
     if (!baseURL) {
       throw new Error('BASE_URL is required for regression tests.');
     }

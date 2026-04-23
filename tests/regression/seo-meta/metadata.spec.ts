@@ -12,13 +12,6 @@ test.describe('SEO metadata', () => {
           + '@allure.label.severity:normal '
           + '@regression',
         async ({ page, baseURL }) => {
-          const isPendingTitleTriage = ['solutions', 'drug-owners-developers'].includes(auditedPage.key);
-          // Pending product/marketing confirmation — see reports/seo-title-discrepancies.md
-          test.fixme(
-            isPendingTitleTriage,
-            'Pending product/marketing confirmation — see reports/seo-title-discrepancies.md',
-          );
-
           if (!baseURL) {
             throw new Error('BASE_URL is required for regression tests.');
           }
