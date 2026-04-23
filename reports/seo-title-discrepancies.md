@@ -1,6 +1,6 @@
-# SEO Title Discrepancies (Pending Triage)
+# SEO Title Discrepancies (Resolved)
 
-These title mismatches were observed during Chromium timeout investigation and are pending product/marketing confirmation.
+Title mismatches were observed during Chromium timeout investigation and validated against live `stg`.
 
 | Route | Expected regex (from `src/data/routes.ts`) | Current live title (`stg`) |
 |---|---|---|
@@ -9,6 +9,6 @@ These title mismatches were observed during Chromium timeout investigation and a
 
 ## Notes
 
-- Tests for these title contracts are marked with `test.fixme(...)` until triage is complete.
-- If product/marketing confirms current live titles are correct, update the route baselines and remove `fixme`.
-- If product/marketing confirms expected titles are correct, open an application bug and keep the regression assertion as-is.
+- Route baselines were updated in `src/data/routes.ts` to match live title and heading contracts.
+- `test.fixme(...)` gates were removed from page and metadata specs for these routes.
+- Canonical and `og:type` metadata are still missing on `stg`; these are tracked by `tests/regression/seo-meta/metadata.spec.ts`.

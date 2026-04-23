@@ -27,14 +27,14 @@ export const AUDITED_PAGES: AuditedPage[] = [
   {
     key: 'solutions',
     route: '/solutions',
-    titlePattern: /Mirion Radiopharma Solutions \| Overview/i,
-    heading: 'Every Step in Radiopharma Development and Delivery',
+    titlePattern: /Mirion Radiopharma \| Explore Solutions/i,
+    heading: 'Trusted Radiopharma Resources',
   },
   {
     key: 'drug-owners-developers',
     route: '/drug-owners-developers',
-    titlePattern: /Radiopharma Drug Development Solutions \| Mirion/i,
-    heading: 'Accelerating Timelines. Reducing Risk. Improving Visibility.',
+    titlePattern: /Solutions for Drug Owners and Developers \| Mirion Radiopharma/i,
+    heading: 'From Trial Design to Market Impact',
   },
   {
     key: 'isotope-producers-radiopharmacies',

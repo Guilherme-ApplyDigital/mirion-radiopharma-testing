@@ -3,14 +3,22 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const runLoginE2E = process.env.RUN_LOGIN_E2E === 'true';
+const loginSpecIgnore = runLoginE2E ? [] : ['**/e2e/login.e2e.spec.ts'];
+
 const allProjects = [
   {
     name: 'chromium',
     use: { ...devices['Desktop Chrome'] },
+    testIgnore: [
+      '**/regression/pages/mobile-rendering.spec.ts',
+      ...loginSpecIgnore,
+    ],
   },
   {
     name: 'mobile-chrome',
     use: { ...devices['Pixel 5'] },
+    testIgnore: loginSpecIgnore,
   },
 ];
 
