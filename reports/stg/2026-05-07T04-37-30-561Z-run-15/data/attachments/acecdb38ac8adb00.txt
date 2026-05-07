@@ -1,0 +1,1 @@
+[filtered:non-first-party:] [error] Blocked script execution in 'about:blank' because the document's frame is sandboxed and the 'allow-scripts' permission is not set. @ about:blank
