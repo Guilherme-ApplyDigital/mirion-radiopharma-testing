@@ -1,5 +1,15 @@
 [
   {
+    "id": "25619963638-stg",
+    "date": "2026-05-10T04:46:43.777Z",
+    "env": "stg",
+    "runNumber": "18",
+    "runId": "25619963638",
+    "sha": "0cbf1b5",
+    "reportPath": "reports/stg/2026-05-10T04-46-43-746Z-run-18/index.html",
+    "runUrl": "https://github.com/Guilherme-ApplyDigital/mirion-radiopharma-testing/actions/runs/25619963638"
+  },
+  {
     "id": "25591486581-stg",
     "date": "2026-05-09T04:25:59.626Z",
     "env": "stg",
