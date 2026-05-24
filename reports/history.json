@@ -1,5 +1,15 @@
 [
   {
+    "id": "26352389018-stg",
+    "date": "2026-05-24T05:04:45.136Z",
+    "env": "stg",
+    "runNumber": "32",
+    "runId": "26352389018",
+    "sha": "0cbf1b5",
+    "reportPath": "reports/stg/2026-05-24T05-04-45-112Z-run-32/index.html",
+    "runUrl": "https://github.com/Guilherme-ApplyDigital/mirion-radiopharma-testing/actions/runs/26352389018"
+  },
+  {
     "id": "26323534036-stg",
     "date": "2026-05-23T04:39:56.187Z",
     "env": "stg",
@@ -288,15 +298,5 @@
     "sha": "0cbf1b5",
     "reportPath": "reports/stg/2026-04-25T03-56-38-371Z-run-3/index.html",
     "runUrl": "https://github.com/Guilherme-ApplyDigital/mirion-radiopharma-testing/actions/runs/24921860203"
-  },
-  {
-    "id": "24871834404-stg",
-    "date": "2026-04-24T04:21:35.312Z",
-    "env": "stg",
-    "runNumber": "2",
-    "runId": "24871834404",
-    "sha": "0cbf1b5",
-    "reportPath": "reports/stg/2026-04-24T04-21-35-284Z-run-2/index.html",
-    "runUrl": "https://github.com/Guilherme-ApplyDigital/mirion-radiopharma-testing/actions/runs/24871834404"
   }
 ]
