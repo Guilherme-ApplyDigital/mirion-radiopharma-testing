@@ -1,0 +1,391 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: regression/seo-meta/metadata.spec.ts >> SEO metadata >> audited pages >> should expose canonical and social metadata on home @allure.label.epic:Regression @allure.label.feature:SeoMeta @allure.label.story:MetadataContract @allure.label.severity:normal @regression
+- Location: tests/regression/seo-meta/metadata.spec.ts:7:11
+
+# Error details
+
+```
+Error: expect(received).not.toEqual(expected) // deep equality
+
+Expected: not ""
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "Mirion Logo" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - img "Mirion Logo" [ref=e8]
+      - navigation "Global Navigation" [ref=e9]:
+        - button "Solutions" [ref=e11] [cursor=pointer]:
+          - generic [ref=e12]: Solutions
+          - img [ref=e13]
+        - button "Products" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Products
+          - img [ref=e18]
+        - link "About Us" [ref=e21] [cursor=pointer]:
+          - /url: /about-us
+          - generic [ref=e22]: About Us
+        - link "Contact Us" [ref=e24] [cursor=pointer]:
+          - /url: /contact-us
+          - generic [ref=e25]: Contact Us
+      - search [ref=e28]:
+        - generic [ref=e30]:
+          - searchbox "Search" [ref=e31]
+          - generic [ref=e32]:
+            - img
+  - main [ref=e33]:
+    - generic [ref=e34]:
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - heading "Clarity and Control for Radiopharma" [level=1] [ref=e43]
+          - paragraph [ref=e44]: From discover to dose delivery, Mirion enables promising therapies with efficient, safe and compliant solutions.
+        - link "Explore Solution" [ref=e46] [cursor=pointer]:
+          - /url: /solutions
+          - generic [ref=e47]: Explore Solution
+      - generic [ref=e48]:
+        - heading "Trusted Brands Delivering Mirion Radiopharma Solutions" [level=2] [ref=e49]
+        - generic [ref=e50]:
+          - img "Mirion partner brand" [ref=e52]
+          - img "Mirion partner brand" [ref=e54]
+          - img "Mirion partner brand" [ref=e56]
+          - img "Mirion partner brand" [ref=e58]
+          - img "Mirion partner brand" [ref=e60]
+          - img "Mirion partner brand" [ref=e62]
+      - generic [ref=e63]:
+        - generic [ref=e65]:
+          - heading "Explore Solutions for Your Role" [level=2] [ref=e66]
+          - paragraph [ref=e67]: Eliminate barriers and drive progress wherever your contributions lie within the radiopharma lifecycle.
+        - generic [ref=e69]:
+          - link "Drug Owners and Developers" [ref=e70] [cursor=pointer]:
+            - /url: /drug-owners-developers
+            - article "Drug Owners and Developers" [ref=e71]:
+              - heading "Drug Owners and Developers" [level=3] [ref=e75]
+              - generic [ref=e76]:
+                - paragraph [ref=e78]: Close data gaps across clinical trials and commercialization. See supply, quality and timelines in one view.
+                - generic [ref=e79]:
+                  - paragraph [ref=e80]: Explore
+                  - img [ref=e81]
+          - link "Isotope Producers and Radiopharmacies" [ref=e83] [cursor=pointer]:
+            - /url: /isotope-producers-radiopharmacies
+            - article "Isotope Producers and Radiopharmacies" [ref=e84]:
+              - heading "Isotope Producers and Radiopharmacies" [level=3] [ref=e88]
+              - generic [ref=e89]:
+                - paragraph [ref=e91]: Protect yield and compliance with calibrated assays, GMP-ready workflows and audit-ready reporting.
+                - generic [ref=e92]:
+                  - paragraph [ref=e93]: Explore
+                  - img [ref=e94]
+          - link "Hospitals and Clinical Sites" [ref=e96] [cursor=pointer]:
+            - /url: /hospitals-clinical-sites
+            - article "Hospitals and Clinical Sites" [ref=e97]:
+              - heading "Hospitals and Clinical Sites" [level=3] [ref=e101]
+              - generic [ref=e102]:
+                - paragraph [ref=e104]: Keep staff safe and schedules on track with shielding, dosimetry and workflow tools for nuclear medicine.
+                - generic [ref=e105]:
+                  - paragraph [ref=e106]: Explore
+                  - img [ref=e107]
+          - link [ref=e109] [cursor=pointer]:
+            - /url: /solutions
+            - article [ref=e110]:
+              - generic [ref=e114]:
+                - paragraph [ref=e115]: Explore all Solutions
+                - img [ref=e116]
+      - generic [ref=e119]:
+        - generic [ref=e120]:
+          - heading "Getting Beyond the Barriers" [level=2] [ref=e121]
+          - paragraph [ref=e122]: Progress stalls for predictable reasons. Connect QA, shielding, and workflow to protect purity and keep doses on schedule.
+        - generic [ref=e123]:
+          - link "Exposure Risk to Staff and Patients" [ref=e124] [cursor=pointer]:
+            - /url: /hospitals-clinical-sites#12e79609-2e70-4e51-ae7b-ab759f23d387
+            - article "Exposure Risk to Staff and Patients" [ref=e125]:
+              - heading "Exposure Risk to Staff and Patients" [level=3] [ref=e129]
+              - generic [ref=e130]:
+                - paragraph [ref=e132]: Shielding, monitoring and dosimetry solutions for meeting ALARA every day.
+                - generic [ref=e133]:
+                  - paragraph [ref=e134]: Explore More
+                  - img [ref=e135]
+          - link "Isotope Purity Uncertainty" [ref=e137] [cursor=pointer]:
+            - /url: /isotope-producers-radiopharmacies#7b7d5a1c-51cc-4a7e-9571-8316c397b701
+            - article "Isotope Purity Uncertainty" [ref=e138]:
+              - heading "Isotope Purity Uncertainty" [level=3] [ref=e142]
+              - generic [ref=e143]:
+                - paragraph [ref=e145]: Assay and QA systems that verify quality, safety and compliance.
+                - generic [ref=e146]:
+                  - paragraph [ref=e147]: Explore More
+                  - img [ref=e148]
+          - link "Missed Doses from Planning Gaps" [ref=e150] [cursor=pointer]:
+            - /url: /hospitals-clinical-sites#9bb45bb3-6943-4074-b791-5835149a21e1
+            - article "Missed Doses from Planning Gaps" [ref=e151]:
+              - heading "Missed Doses from Planning Gaps" [level=3] [ref=e155]
+              - generic [ref=e156]:
+                - paragraph [ref=e158]: Scheduling tools that align production, calibration and patient need.
+                - generic [ref=e159]:
+                  - paragraph [ref=e160]: Explore More
+                  - img [ref=e161]
+          - link "Unclear Manufacturing Flow" [ref=e163] [cursor=pointer]:
+            - /url: /drug-owners-developers#ebf1d2da-4591-494a-bdc0-6a82b2b2c26b
+            - article "Unclear Manufacturing Flow" [ref=e164]:
+              - heading "Unclear Manufacturing Flow" [level=3] [ref=e168]
+              - generic [ref=e169]:
+                - paragraph [ref=e171]: Batch-to-order visibility and audit-ready reporting for better clarity.
+                - generic [ref=e172]:
+                  - paragraph [ref=e173]: Explore More
+                  - img [ref=e174]
+          - link "High-Energy Shielding Needs" [ref=e176] [cursor=pointer]:
+            - /url: /hospitals-clinical-sites#c4f75155-8a7f-4336-b701-b1ee02c26b22
+            - article "High-Energy Shielding Needs" [ref=e177]:
+              - heading "High-Energy Shielding Needs" [level=3] [ref=e181]
+              - generic [ref=e182]:
+                - paragraph [ref=e184]: Solutions built for F-18, Lu-177 and other high-energy isotopes.
+                - generic [ref=e185]:
+                  - paragraph [ref=e186]: Explore More
+                  - img [ref=e187]
+          - link "Order-to-Cash Friction" [ref=e189] [cursor=pointer]:
+            - /url: /drug-owners-developers#b750d4ab-ee5e-4a3b-879b-d6b19288d8f3
+            - article "Order-to-Cash Friction" [ref=e190]:
+              - heading "Order-to-Cash Friction" [level=3] [ref=e194]
+              - generic [ref=e195]:
+                - paragraph [ref=e197]: Value tracking, reconciliation and recovery from fulfillment to outcome.
+                - generic [ref=e198]:
+                  - paragraph [ref=e199]: Explore Solutions
+                  - img [ref=e200]
+      - generic [ref=e202]:
+        - heading "Enabling a Connected Ecosystem for Optimal Patient Care" [level=2] [ref=e203]
+        - paragraph [ref=e204]: Collectively, we serve the fields of radiopharma, nuclear medicine and molecular imaging.
+      - generic [ref=e207]:
+        - generic [ref=e209]:
+          - paragraph [ref=e210]: About Mirion
+          - generic [ref=e211]:
+            - heading "Partnering for Protection and Progress" [level=2] [ref=e212]
+            - paragraph [ref=e213]: Deep expertise and a broad portfolio make Mirion a trusted partner across the radiopharmaceutical value chain.
+            - link "Discover Our Story" [ref=e215] [cursor=pointer]:
+              - /url: /about-us
+              - generic [ref=e216]: Discover Our Story
+        - img "Innovation at the Core of Protection" [ref=e218]
+      - generic [ref=e219]:
+        - article [ref=e220]:
+          - heading "Committed to Safety, Innovation and Care" [level=2] [ref=e221]
+        - generic [ref=e222]:
+          - img "Safety is at the core of our solutions" [ref=e224]
+          - generic [ref=e225]:
+            - article [ref=e226]:
+              - strong
+              - generic [ref=e227]:
+                - heading "For Specialists" [level=3] [ref=e228]
+                - paragraph [ref=e229]: We protect the scientists, clinicians, and professionals who make a difference every day.
+            - article [ref=e230]:
+              - strong
+              - generic [ref=e231]:
+                - heading "For Patients" [level=3] [ref=e232]
+                - paragraph [ref=e233]: We help expand access to safe, effective treatments that improve health and quality of life.
+            - article [ref=e234]:
+              - strong
+              - generic [ref=e235]:
+                - heading "For Good" [level=3] [ref=e236]
+                - paragraph [ref=e237]: We help you harness radiation responsibly to enable therapies and discoveries that change lives.
+            - article [ref=e238]:
+              - strong
+              - generic [ref=e239]:
+                - heading "For the Future" [level=3] [ref=e240]
+                - paragraph [ref=e241]: We share our unrivaled expertise with the industry to drive discovery and innovation.
+      - generic [ref=e244]:
+        - heading "Let's Map Your Workflow" [level=2] [ref=e246]
+        - generic [ref=e247]:
+          - heading "Our team can help identify solutions tailored to your challenges." [level=3] [ref=e248]
+          - link "Get in Touch" [ref=e249] [cursor=pointer]:
+            - /url: /contact-us
+            - generic [ref=e250]: Get in Touch
+  - contentinfo [ref=e251]:
+    - generic [ref=e252]:
+      - navigation "primary navigation" [ref=e253]:
+        - generic [ref=e255]:
+          - heading "Solutions" [level=2] [ref=e256]
+          - list "Solutions" [ref=e257]:
+            - listitem [ref=e258]:
+              - link "For Drug Owners and Developers" [ref=e259] [cursor=pointer]:
+                - /url: /drug-owners-developers
+                - generic [ref=e260]: For Drug Owners and Developers
+            - listitem [ref=e261]:
+              - link "For Isotope Producers and Radiopharmacies" [ref=e262] [cursor=pointer]:
+                - /url: /isotope-producers-radiopharmacies
+                - generic [ref=e263]: For Isotope Producers and Radiopharmacies
+            - listitem [ref=e264]:
+              - link "For Hospitals & Clinical Sites" [ref=e265] [cursor=pointer]:
+                - /url: /hospitals-clinical-sites
+                - generic [ref=e266]: For Hospitals & Clinical Sites
+        - generic [ref=e268]:
+          - heading "Products" [level=2] [ref=e269]
+          - list "Products" [ref=e270]:
+            - listitem [ref=e271]:
+              - link "Lab Equipment & Accessories" [ref=e272] [cursor=pointer]:
+                - /url: /lab-equipment-accessories
+                - generic [ref=e273]: Lab Equipment & Accessories
+            - listitem [ref=e274]:
+              - link "Health Physics & Radiation Protection" [ref=e275] [cursor=pointer]:
+                - /url: /health-physics-radiation-protection
+                - generic [ref=e276]: Health Physics & Radiation Protection
+            - listitem [ref=e277]:
+              - link "Spectroscopy & Scientific Analysis" [ref=e278] [cursor=pointer]:
+                - /url: /spectroscopy-scientific-analysis
+                - generic [ref=e279]: Spectroscopy & Scientific Analysis
+            - listitem [ref=e280]:
+              - link "Shielding, Shipping, and Waste Management" [ref=e281] [cursor=pointer]:
+                - /url: /shielding-shipping-waste-management
+                - generic [ref=e282]: Shielding, Shipping, and Waste Management
+            - listitem [ref=e283]:
+              - link "Management Platforms" [ref=e284] [cursor=pointer]:
+                - /url: /management-platform
+                - generic [ref=e285]: Management Platforms
+            - listitem [ref=e286]:
+              - link "Dose Preparation and Delivery" [ref=e287] [cursor=pointer]:
+                - /url: /dose-preparation-delivery
+                - generic [ref=e288]: Dose Preparation and Delivery
+        - generic [ref=e290]:
+          - heading "About" [level=2] [ref=e291]
+          - list "About" [ref=e292]:
+            - listitem [ref=e293]:
+              - link "About Us" [ref=e294] [cursor=pointer]:
+                - /url: /about-us
+                - generic [ref=e295]: About Us
+            - listitem [ref=e296]:
+              - link "Mirion.com" [ref=e297] [cursor=pointer]:
+                - /url: https://www.mirion.com/
+                - generic [ref=e298]: Mirion.com
+                - img [ref=e299]
+            - listitem [ref=e301]:
+              - link "Contact Us" [ref=e302] [cursor=pointer]:
+                - /url: /contact-us
+                - generic [ref=e303]: Contact Us
+            - listitem [ref=e304]:
+              - link "Careers" [ref=e305] [cursor=pointer]:
+                - /url: https://www.mirion.com/careers
+                - generic [ref=e306]: Careers
+                - img [ref=e307]
+        - generic [ref=e310]:
+          - heading "Social" [level=2] [ref=e311]
+          - list "Social" [ref=e312]:
+            - listitem [ref=e313]:
+              - link "Mirion Technologies LinkedIn" [ref=e314] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/miriontechnologies
+                - generic [ref=e315]: Mirion Technologies LinkedIn
+                - img [ref=e316]
+            - listitem [ref=e318]:
+              - link "Mirion Medical LinkedIn" [ref=e319] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/mirion-medical
+                - generic [ref=e320]: Mirion Medical LinkedIn
+                - img [ref=e321]
+            - listitem [ref=e323]:
+              - link "YouTube" [ref=e324] [cursor=pointer]:
+                - /url: https://www.youtube.com/@mirionhq
+                - generic [ref=e325]: YouTube
+                - img [ref=e326]
+      - navigation "legal links" [ref=e328]:
+        - list [ref=e329]:
+          - listitem [ref=e330]:
+            - link "Legal" [ref=e331] [cursor=pointer]:
+              - /url: https://www.mirion.com/legal
+              - generic [ref=e332]: Legal
+              - img [ref=e333]
+          - listitem [ref=e335]:
+            - link "Privacy Policies and Data Notices" [ref=e336] [cursor=pointer]:
+              - /url: https://www.mirion.com/legal/privacy-policy-and-data-privacy-notices
+              - generic [ref=e337]: Privacy Policies and Data Notices
+              - img [ref=e338]
+          - listitem [ref=e340]:
+            - 'link "CCPA: Do not sell my personal information" [ref=e341] [cursor=pointer]':
+              - /url: https://www.mirion.com/legal/california-consumer-privacy-act-opt-out-form
+              - generic [ref=e342]: "CCPA: Do not sell my personal information"
+              - img [ref=e343]
+          - listitem [ref=e345]:
+            - generic [ref=e347] [cursor=pointer]: Cookie Settings
+      - separator [ref=e348]
+      - generic [ref=e349]:
+        - link [ref=e350] [cursor=pointer]:
+          - /url: https://www.mirion.com/
+          - img [ref=e352]
+        - paragraph [ref=e353]: © 2025 Mirion Technologies, Inc. All Rights Reserved.
+  - alert [ref=e354]
+  - iframe [ref=e355]:
+    
+  - dialog "Privacy" [ref=e357]:
+    - generic [ref=e358]:
+      - button "Close" [ref=e360] [cursor=pointer]
+      - generic [ref=e361]:
+        - generic [ref=e364]:
+          - text: This website uses cookies and other tracking technologies to enhance user experience and to analyze performance and traffic on our website. We also share information about your use of our site with our social media, advertising and analytics partners. If we have detected an opt-out preference signal then it will be honored.
+          - link "More information about your privacy, opens in a new tab" [ref=e365] [cursor=pointer]:
+            - /url: https://www.mirion.com/legal/privacy-policy-and-data-privacy-notices
+            - text: See our Cookie Policy for more information
+        - generic [ref=e367]:
+          - button "Accept Cookies" [ref=e369] [cursor=pointer]
+          - button "Do Not Sell or Share My Personal Information, Opens the preference center dialog" [ref=e371] [cursor=pointer]: Do Not Sell or Share My Personal Information
+  - button "Open Intercom Messenger" [ref=e372] [cursor=pointer]:
+    - generic:
+      - img
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from '../../../src/fixtures/test-fixtures';
+  2  | import { AUDITED_PAGES } from '../../../src/data/routes';
+  3  | 
+  4  | test.describe('SEO metadata', () => {
+  5  |   test.describe.parallel('audited pages', () => {
+  6  |     for (const auditedPage of AUDITED_PAGES) {
+  7  |       test(
+  8  |         `should expose canonical and social metadata on ${auditedPage.key} `
+  9  |           + '@allure.label.epic:Regression '
+  10 |           + '@allure.label.feature:SeoMeta '
+  11 |           + '@allure.label.story:MetadataContract '
+  12 |           + '@allure.label.severity:normal '
+  13 |           + '@regression',
+  14 |         async ({ page, baseURL }) => {
+  15 |           if (!baseURL) {
+  16 |             throw new Error('BASE_URL is required for regression tests.');
+  17 |           }
+  18 | 
+  19 |           await page.goto(auditedPage.route, { waitUntil: 'networkidle' });
+  20 |           await expect(page).toHaveTitle(auditedPage.titlePattern);
+  21 | 
+  22 |           const metadata = await page.evaluate(() => {
+  23 |             const byName = (name: string) =>
+  24 |               document.querySelector(`meta[name="${name}"]`)?.getAttribute('content') ?? '';
+  25 |             const byProperty = (property: string) =>
+  26 |               document.querySelector(`meta[property="${property}"]`)?.getAttribute('content') ?? '';
+  27 |             const canonical = document.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? '';
+  28 | 
+  29 |             return {
+  30 |               description: byName('description'),
+  31 |               canonical,
+  32 |               ogTitle: byProperty('og:title'),
+  33 |               ogDescription: byProperty('og:description'),
+  34 |               ogType: byProperty('og:type'),
+  35 |             };
+  36 |           });
+  37 | 
+  38 |           expect(metadata.description).not.toEqual('');
+> 39 |           expect(metadata.canonical).not.toEqual('');
+     |                                          ^ Error: expect(received).not.toEqual(expected) // deep equality
+  40 |           expect(metadata.canonical.startsWith(baseURL)).toBeTruthy();
+  41 |           expect(metadata.ogTitle).not.toEqual('');
+  42 |           expect(metadata.ogDescription).not.toEqual('');
+  43 |           expect(metadata.ogType).not.toEqual('');
+  44 |         },
+  45 |       );
+  46 |     }
+  47 |   });
+  48 | });
+  49 | 
+```
