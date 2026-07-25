@@ -1,0 +1,2 @@
+[filtered:non-first-party:www.google.com] [error] requestStorageAccess: Permission denied. @ https://www.google.com/recaptcha/api2/anchor?ar=1&k=6Lfc5OcsAAAAAG1-_CxxVdOY7I73PSlIwFZTtEon&co=aHR0cHM6Ly9zdGcucmFkaW9waGFybWEubWlyaW9udGVzdC5uZXQ6NDQz&hl=en&v=A7KpaEASfhDcK0nXxgQEyyYv&size=invisible&anchor-ms=20000&execute-ms=30000&cb=6wo3ymz5zwhk
+[filtered:non-first-party:] [error] Blocked script execution in 'about:blank' because the document's frame is sandboxed and the 'allow-scripts' permission is not set. @ about:blank
