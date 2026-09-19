@@ -1,0 +1,102 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: regression/forms/contact-form.spec.ts >> Contact form >> should submit contact form through mocked endpoint @allure.label.epic:Regression @allure.label.feature:Forms @allure.label.story:SafeSubmission @allure.label.severity:critical @regression @forms @critical
+- Location: tests/regression/forms/contact-form.spec.ts:44:7
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: locator('form').filter({ has: locator('#firstname') }).first()
+Expected: visible
+Timeout: 10000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 10000ms
+  - waiting for locator('form').filter({ has: locator('#firstname') }).first()
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - region "This page doesn’t exist" [ref=e3]:
+      - heading "This page doesn’t exist" [level=1] [ref=e4]
+      - paragraph [ref=e5]: It may have been moved, removed, or never existed.
+      - button "Go back" [ref=e6] [cursor=pointer]
+      - generic "HTTP status, error code, and request ID" [ref=e7]:
+        - paragraph [ref=e8]: 404 DEPLOYMENT_NOT_FOUND
+        - paragraph [ref=e9]: iad1::gm2nj-1789795288491-d7aa5dc2dc0c
+  - generic "Documentation, logs, and debugging actions" [ref=e10]:
+    - link "View DEPLOYMENT_NOT_FOUND documentation" [ref=e11] [cursor=pointer]:
+      - /url: https://vercel.com/docs/errors/deployment_not_found
+      - generic [ref=e12]: View Documentation
+    - img [ref=e13]
+    - button "Copy DEPLOYMENT_NOT_FOUND debugging instructions to clipboard" [ref=e15] [cursor=pointer]:
+      - generic [ref=e16]: Copy Debug Prompt
+      - img
+    - status [ref=e17]
+```
+
+# Test source
+
+```ts
+  1  | import { expect, Locator, Page } from '@playwright/test';
+  2  | import { BasePage } from './base.page';
+  3  | 
+  4  | export class ContactPage extends BasePage {
+  5  |   readonly mainForm: Locator;
+  6  |   readonly firstNameInput: Locator;
+  7  |   readonly lastNameInput: Locator;
+  8  |   readonly emailInput: Locator;
+  9  |   readonly phoneInput: Locator;
+  10 |   readonly companyInput: Locator;
+  11 |   readonly messageInput: Locator;
+  12 |   readonly countrySelect: Locator;
+  13 |   readonly submitButton: Locator;
+  14 | 
+  15 |   constructor(page: Page) {
+  16 |     super(page);
+  17 |     this.mainForm = page.locator('form').filter({ has: page.locator('#firstname') }).first();
+  18 |     this.firstNameInput = page.locator('#firstname');
+  19 |     this.lastNameInput = page.locator('#lastname');
+  20 |     this.emailInput = page.locator('#email');
+  21 |     this.phoneInput = page.locator('#phone');
+  22 |     this.companyInput = page.locator('#company');
+  23 |     this.messageInput = page.locator('#message');
+  24 |     this.countrySelect = page.locator('#country');
+  25 |     const submitById = this.mainForm.locator('#contactSubmit');
+  26 |     const submitByRole = this.mainForm.getByRole('button', {
+  27 |       name: /request consultation|submit|send/i,
+  28 |     });
+  29 |     this.submitButton = submitById.or(submitByRole).first();
+  30 |   }
+  31 | 
+  32 |   async open(): Promise<void> {
+  33 |     await this.goto('/contact-us');
+> 34 |     await expect(this.mainForm).toBeVisible();
+     |                                 ^ Error: expect(locator).toBeVisible() failed
+  35 |   }
+  36 | 
+  37 |   async fillRequiredFields(): Promise<void> {
+  38 |     await this.firstNameInput.fill('QA');
+  39 |     await this.lastNameInput.fill('Automation');
+  40 |     await this.emailInput.fill('qa.automation@example.com');
+  41 |     await this.phoneInput.fill('5551234567');
+  42 |     await this.companyInput.fill('Mirion QA');
+  43 |     await this.messageInput.fill('Regression test payload. Do not process.');
+  44 |     await this.countrySelect.selectOption({ index: 1 });
+  45 |   }
+  46 | }
+  47 | 
+```
